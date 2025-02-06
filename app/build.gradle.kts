@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.example.testwithpoetry"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.testwithpoetry"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -73,5 +73,6 @@ dependencies {
     kapt(libs.room.compiler)
 
     implementation(project(":core"))
+    implementation(project(":features"))
 
 }
