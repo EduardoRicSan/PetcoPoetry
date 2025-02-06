@@ -1,24 +1,20 @@
 plugins {
-    alias(libs.plugins.android.application)
+    id("com.android.library")
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     id("dagger.hilt.android.plugin")
     id("kotlin-kapt")
 }
-
 android {
-    namespace = "com.example.testwithpoetry"
+    namespace = "com.example.features"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.testwithpoetry"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -36,9 +32,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
     }
 }
 

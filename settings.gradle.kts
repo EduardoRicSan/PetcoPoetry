@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "TestWithPoetry"
 include(":app")
+include(":core")
+include(":features")
