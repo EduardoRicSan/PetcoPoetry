@@ -1,11 +1,14 @@
 package com.example.core.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.example.core.data.network.PoetryApiService
 import com.example.core.data.network.PoetryApiServiceImpl
 import com.example.core.data.repository.PoetryRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
@@ -55,4 +58,10 @@ object AppModule {
     fun providePoetryRepository(
         apiService: PoetryApiService,
     ): PoetryRepository = PoetryRepository(apiService)
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    }
 }

@@ -33,10 +33,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.core.data.network.NetworkResource
 import com.example.core.domain.model.PoemTitle
+import com.example.features.presentation.ui.common.LoaderComponent
 import com.example.features.presentation.viewmodels.poem.PoemViewModel
 import kotlinx.coroutines.launch
 
@@ -49,7 +51,7 @@ fun AuthorDetailScreen(authorName: String) {
     val authorState = viewModel.poemTitleUIState.collectAsState().value
     when (authorState) {
         is NetworkResource.Loading -> {
-            Log.d("DETAIL", "Loading")
+            LoaderComponent()
         }
 
         is NetworkResource.Success -> {
@@ -72,12 +74,13 @@ fun PoemsComponent(
 ) {
     val viewModel: PoemViewModel = hiltViewModel()
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var showLoader by remember { mutableStateOf(false) }
     val poemInfoUIState = viewModel.poemInfoUIState.collectAsState().value
 
     LaunchedEffect(poemInfoUIState) {
         if (poemInfoUIState is NetworkResource.Success) {
+            showLoader = false
             showBottomSheet = true
         }
     }
@@ -96,15 +99,16 @@ fun PoemsComponent(
                 (poemInfoUIState as? NetworkResource.Success)?.data?.first()?.let { poemInfo ->
                     Text(
                         text = poemInfo.title,
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.displaySmall,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                            .padding(16.dp)
+                            .padding(16.dp),
+                        textAlign = TextAlign.Center
                     )
                     Text(
                         text = poemInfo.author,
-                        style = MaterialTheme.typography.displaySmall,
+                        style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
@@ -125,7 +129,6 @@ fun PoemsComponent(
         }
     }
 
-
     LazyColumn {
         items(data) { poemTitle ->
             Row(modifier = Modifier
@@ -134,6 +137,7 @@ fun PoemsComponent(
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .clickable {
+                    showLoader = true
                     viewModel.getPoemInfo(
                         authorName = authorName,
                         poemTitle = poemTitle.title
@@ -150,19 +154,6 @@ fun PoemsComponent(
                 )
             }
         }
-        when (poemInfoUIState) {
-            is NetworkResource.Loading -> {
-                Log.d("BS", "Loading")
-            }
-
-            is NetworkResource.Success -> {
-                Log.d("BS", "${poemInfoUIState.data}")
-            }
-
-            is NetworkResource.Error -> {
-                Log.d("BS", poemInfoUIState.message)
-            }
-        }
-
     }
+    if (showLoader) LoaderComponent()
 }

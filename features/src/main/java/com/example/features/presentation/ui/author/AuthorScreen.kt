@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.core.data.network.NetworkResource
 import com.example.core.domain.model.Author
+import com.example.features.presentation.ui.common.LoaderComponent
 import com.example.features.presentation.viewmodels.author.AuthorViewModel
 
 @Composable
@@ -32,9 +33,7 @@ fun AuthorScreen(onItemClicked: (String) -> Unit,
     val authorsViewModel: AuthorViewModel = hiltViewModel()
     val authorState = authorsViewModel.authorsUIState.collectAsState().value
     when (authorState) {
-        is NetworkResource.Loading -> {
-            Log.d("AUTHORS", "Loading")
-        }
+        is NetworkResource.Loading -> { LoaderComponent() }
 
         is NetworkResource.Success -> {
             LazyColumn {

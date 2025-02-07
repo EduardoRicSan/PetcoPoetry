@@ -1,15 +1,11 @@
 package com.example.testwithpoetry
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -18,17 +14,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.core.data.network.NetworkResource
-import com.example.testwithpoetry.navHost.PoetryNavHost.PoetryNavHost
-import com.example.testwithpoetry.navHost.PoetryNavHost.Screen
-import com.example.testwithpoetry.navHost.PoetryNavHost.currentRoute
+import com.example.testwithpoetry.navHost.PoetryNavHost
+import com.example.testwithpoetry.navHost.Screen
+import com.example.testwithpoetry.navHost.currentRoute
 import com.example.testwithpoetry.ui.theme.TestWithPoetryTheme
 import dagger.hilt.android.AndroidEntryPoint
 

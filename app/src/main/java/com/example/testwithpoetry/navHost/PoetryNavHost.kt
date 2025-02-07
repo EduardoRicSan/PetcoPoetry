@@ -1,7 +1,6 @@
-package com.example.testwithpoetry.navHost.PoetryNavHost
+package com.example.testwithpoetry.navHost
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.material.icons.Icons
@@ -9,12 +8,13 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,6 +23,7 @@ import com.example.features.presentation.ui.author.AuthorScreen
 import com.example.features.presentation.ui.authorDetail.AuthorDetailScreen
 import com.example.features.presentation.ui.profiileScreen.ProfileScreen
 import com.example.features.presentation.ui.welcomeScreen.WelcomeScreen
+import com.example.testwithpoetry.MainViewModel
 
 private const val GRAPH = "poetry_route"
 private const val START_DESTINATION = "welcome_route"
@@ -35,9 +36,13 @@ fun PoetryNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    val mainViewModel: MainViewModel = hiltViewModel()
+
+    val isFirstLaunch by mainViewModel.isFirstLaunch.collectAsState()
+
     NavHost(
         navController = navController,
-        startDestination = Screen.Welcome.route,
+        startDestination = if (isFirstLaunch) Screen.Welcome.route else Screen.Author.route,
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() },
         modifier = modifier
