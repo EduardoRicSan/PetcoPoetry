@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.example.testwithpoetry"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.testwithpoetry"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -59,7 +59,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    //Dager-hilt
+    //Dagger-hilt
     implementation(libs.dagger.hitl)
     kapt(libs.dagger.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
@@ -72,12 +72,7 @@ dependencies {
     implementation(libs.room.paging)
     kapt(libs.room.compiler)
 
-    //Ktor
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.android)
-    implementation(libs.ktor.client.serialization)
-    implementation(libs.ktor.client.logging)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.json)
+    implementation(project(":core"))
+    implementation(project(":features"))
 
 }

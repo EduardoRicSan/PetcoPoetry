@@ -4,17 +4,28 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.features.presentation.viewmodels.profile.ProfileViewModel
+import com.example.testwithpoetry.navHost.PoetryNavHost
+import com.example.testwithpoetry.navHost.Screen
+import com.example.testwithpoetry.navHost.currentRoute
 import com.example.testwithpoetry.ui.theme.TestWithPoetryTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,41 +36,52 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TestWithPoetryTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+               PoetryMainScreen()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    val viewModel: MainViewModel = hiltViewModel()
-    Box (
-        contentAlignment = Alignment.Center,
-        modifier = modifier.fillMaxSize()
-    ) {
-        Button(
-            onClick = {
-                viewModel.action()
-            },
-            modifier = modifier
-        ) {
-            Text(
-                text = "Try me $name",
-            )
-        }
+fun PoetryMainScreen() {
+    val navController = rememberNavController()
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { PoetryTopBar() },
+        bottomBar = { PoetryBottomBar(navController) }
+    ) { innerPaddings ->
+        PoetryNavHost(navController,
+            modifier = Modifier.padding(innerPaddings))
     }
 }
 
-@Preview(showBackground = true)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GreetingPreview() {
-    TestWithPoetryTheme {
-        Greeting("Android")
+fun PoetryTopBar() {
+    val profileViewModel: ProfileViewModel = hiltViewModel()
+    LaunchedEffect(Unit) {
+        profileViewModel.getUser()
+    }
+    val userState = profileViewModel.userState.collectAsState()
+
+    val welcomeMessage = stringResource(R.string.label_welcome, userState.value?.name.orEmpty())
+    TopAppBar(
+        title = { Text(welcomeMessage) }
+    )
+}
+
+@Composable
+fun PoetryBottomBar(navController: NavHostController) {
+    val items = listOf(Screen.Author, Screen.Profile)
+    val currentRoute = currentRoute(navController)
+    NavigationBar {
+        items.forEach { screen ->
+            NavigationBarItem(
+                icon = { Icon(screen.icon, contentDescription = screen.route) },
+                label = { Text(screen.label) },
+                selected = currentRoute == screen.route,
+                onClick = { navController.navigate(screen.route) }
+            )
+        }
     }
 }
