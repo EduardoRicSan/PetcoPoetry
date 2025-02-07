@@ -14,10 +14,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.features.presentation.viewmodels.profile.ProfileViewModel
 import com.example.testwithpoetry.navHost.PoetryNavHost
 import com.example.testwithpoetry.navHost.Screen
 import com.example.testwithpoetry.navHost.currentRoute
@@ -40,7 +45,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun PoetryMainScreen() {
     val navController = rememberNavController()
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { PoetryTopBar() },
@@ -54,8 +58,15 @@ fun PoetryMainScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PoetryTopBar() {
+    val profileViewModel: ProfileViewModel = hiltViewModel()
+    LaunchedEffect(Unit) {
+        profileViewModel.getUser()
+    }
+    val userState = profileViewModel.userState.collectAsState()
+
+    val welcomeMessage = stringResource(R.string.label_welcome, userState.value?.name.orEmpty())
     TopAppBar(
-        title = { Text("¡Bienvenido!") }
+        title = { Text(welcomeMessage) }
     )
 }
 
@@ -63,7 +74,6 @@ fun PoetryTopBar() {
 fun PoetryBottomBar(navController: NavHostController) {
     val items = listOf(Screen.Author, Screen.Profile)
     val currentRoute = currentRoute(navController)
-
     NavigationBar {
         items.forEach { screen ->
             NavigationBarItem(
@@ -73,42 +83,5 @@ fun PoetryBottomBar(navController: NavHostController) {
                 onClick = { navController.navigate(screen.route) }
             )
         }
-    }
-}
-
-/*@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    val viewModel: MainViewModel = hiltViewModel()
-    val authorState = viewModel.authorsUIState.collectAsState().value
-    when (authorState) {
-        is NetworkResource.Loading -> { Log.d("AUTHORS", "Loading") }
-        is NetworkResource.Success -> { Log.d("AUTHORS", "${authorState.data}") }
-
-        is NetworkResource.Error -> { Log.d("AUTHORS", "${authorState.message}") }
-
-    }
-    Box (
-        contentAlignment = Alignment.Center,
-        modifier = modifier.fillMaxSize()
-    ) {
-        Button(
-            onClick = {
-                viewModel.getAuthors()
-               // viewModel.action()
-            },
-            modifier = modifier
-        ) {
-            Text(
-                text = "Try me $name",
-            )
-        }
-    }
-} */
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TestWithPoetryTheme {
-       // Greeting("Android")
     }
 }

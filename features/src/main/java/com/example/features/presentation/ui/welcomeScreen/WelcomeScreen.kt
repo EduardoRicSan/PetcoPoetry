@@ -22,6 +22,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -38,22 +39,36 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.core.data.database.room.entity.User
+import com.example.features.presentation.ui.common.DatePickerTextField
 import com.example.features.presentation.ui.common.isValidEmail
+import com.example.features.presentation.ui.common.toDateLong
+import com.example.features.presentation.viewmodels.profile.ProfileViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun WelcomeScreen(
     onNavigateToAuthorList: () -> Unit,
 ) {
     var isNavigationActive by rememberSaveable { mutableStateOf(false) }
-    Column(
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .padding(24.dp)
     ) {
-        UserFormComponent {
-            isNavigationActive = it
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            UserFormComponent {
+                isNavigationActive = it
+            }
         }
         Button(
             onClick = { onNavigateToAuthorList() },
@@ -63,8 +78,9 @@ fun WelcomeScreen(
                 else MaterialTheme.colorScheme.onTertiary,
                 contentColor = Color.White
             ),
-            shape = RoundedCornerShape(12.dp)
-        ) {
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.align(Alignment.BottomCenter)
+            ) {
             Text(text = "Continue to Poetry")
         }
     }
@@ -74,11 +90,20 @@ fun WelcomeScreen(
 fun UserFormComponent(
     isValidData: (Boolean) -> Unit,
 ) {
+    val profileViewModel: ProfileViewModel = hiltViewModel()
     var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
-    var birthday by rememberSaveable { mutableStateOf("") }
+    var selectedDate by rememberSaveable { mutableStateOf("") }
+    val formattedDate = remember(selectedDate) {
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        if (selectedDate.isNotEmpty()) {
+            sdf.format(Date(selectedDate.toLong()))
+        } else {
+            ""
+        }
+    }
 
-    TextField(
+    OutlinedTextField(
         value = name,
         onValueChange = { name = it },
         singleLine = true,
@@ -93,7 +118,7 @@ fun UserFormComponent(
         modifier = Modifier.fillMaxWidth()
     )
 
-    TextField(
+    OutlinedTextField(
         value = email,
         onValueChange = { email = it },
         label = { Text("Email") },
@@ -112,24 +137,24 @@ fun UserFormComponent(
         modifier = Modifier.fillMaxWidth()
     )
 
-    TextField(
-        value = birthday,
-        onValueChange = { birthday = it },
-        label = { Text("Birthday") },
-        singleLine = true,
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.TwoTone.DateRange,
-                contentDescription = "BirthDay Icon",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        },
-        modifier = Modifier.fillMaxWidth()
+    DatePickerTextField(
+        label = "Select Date",
+        selectedDate = formattedDate,
+        onDateSelected = { millis ->
+            selectedDate = millis.toString()
+        }
     )
 
+
+
     if (name.isNotEmpty() && email.isNotEmpty()
-        && birthday.isNotEmpty() && email.isValidEmail()
-    ) isValidData(true) else isValidData(false)
+        && selectedDate.isNotEmpty() && email.isValidEmail()
+    ) {
+        isValidData(true)
+        profileViewModel.saveUser(User(name = name, email = email, birthday = formattedDate.toDateLong()))
+    } else {
+        isValidData(false)
+    }
 }
 
 @Preview

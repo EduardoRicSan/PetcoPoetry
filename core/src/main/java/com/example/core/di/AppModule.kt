@@ -2,6 +2,8 @@ package com.example.core.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
+import com.example.core.data.database.room.db.AppDatabase
 import com.example.core.data.network.PoetryApiService
 import com.example.core.data.network.PoetryApiServiceImpl
 import com.example.core.data.repository.PoetryRepository
@@ -64,4 +66,6 @@ object AppModule {
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     }
+
+
 }
