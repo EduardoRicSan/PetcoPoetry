@@ -59,7 +59,6 @@ fun PoetryNavHost(
                 onItemClicked = { authorName ->
                     navController.navigate("authorDetail/$authorName")
                 },
-                onFavoriteClick = {},
             )
         }
         composable("authorDetail/{authorName}") { backStackEntry ->
@@ -100,7 +99,6 @@ fun NavGraphBuilder.poetryGraph(
                 onItemClicked = {
                     navController.navigate(AUTHOR_DETAIL_ROUTE)
                 },
-                onFavoriteClick = {}
             )
         }
 
