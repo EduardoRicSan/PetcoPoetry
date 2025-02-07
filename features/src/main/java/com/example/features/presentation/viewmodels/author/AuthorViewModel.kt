@@ -15,6 +15,10 @@ import javax.inject.Inject
 class AuthorViewModel @Inject constructor(
     private val getAuthorUseCase: GetAuthorUseCase
 ): ViewModel() {
+    init {
+        getAuthors()
+    }
+
     private val _authorsUIState = MutableStateFlow<NetworkResource<Author>>(NetworkResource.Loading())
     val authorsUIState: StateFlow<NetworkResource<Author>> = _authorsUIState
 

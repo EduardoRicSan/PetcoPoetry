@@ -18,14 +18,14 @@ class PoetryRepository @Inject constructor(
         poetryApiService.getAuthors().toAuthor()
     }
 
-    suspend fun getPoemsByAuthor(authorName: String): Flow<NetworkResource<PoemTitle>> = safeApiCall {
-        poetryApiService.getPoemsByAuthor(authorName).toPoemTitle()
+    suspend fun getPoemsByAuthor(authorName: String): Flow<NetworkResource<List<PoemTitle>>> = safeApiCall {
+        poetryApiService.getPoemsByAuthor(authorName).map { it.toPoemTitle() }
     }
 
     suspend fun getPoemInfo(
         authorName: String,
         poemTitle: String,
-    ): Flow<NetworkResource<PoemInfo>> = safeApiCall {
-        poetryApiService.getPoemInfo(authorName, poemTitle).toPoemInfo()
+    ): Flow<NetworkResource<List<PoemInfo>>> = safeApiCall {
+        poetryApiService.getPoemInfo(authorName, poemTitle).map { it.toPoemInfo() }
     }
 }

@@ -8,5 +8,5 @@ data class PoemTitleResponse(
     val title: String,
 ) {
 
-    fun toPoemTitle(): PoemTitle = PoemTitle(title)
+    fun toPoemTitle(): PoemTitle = PoemTitle(title = title)
 }

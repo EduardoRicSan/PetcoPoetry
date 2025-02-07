@@ -17,26 +17,25 @@ import javax.inject.Inject
 class PoemViewModel @Inject constructor(
     private val poemUseCase: PoemUseCase
 ): ViewModel() {
-    private val _poemTitleUIState = MutableStateFlow<NetworkResource<PoemTitle>>(NetworkResource.Loading())
-    val poemTitleUIState: StateFlow<NetworkResource<PoemTitle>> = _poemTitleUIState
+    private val _poemTitleUIState = MutableStateFlow<NetworkResource<List<PoemTitle>>>(NetworkResource.Loading())
+    val poemTitleUIState: StateFlow<NetworkResource<List<PoemTitle>>> = _poemTitleUIState
 
-    private val _poemInfoUIState = MutableStateFlow<NetworkResource<PoemInfo>>(NetworkResource.Loading())
-    val poemInfoUIState: StateFlow<NetworkResource<PoemInfo>> = _poemInfoUIState
+    private val _poemInfoUIState = MutableStateFlow<NetworkResource<List<PoemInfo>>>(NetworkResource.Loading())
+    val poemInfoUIState: StateFlow<NetworkResource<List<PoemInfo>>> = _poemInfoUIState
 
-    fun getPoemsByAuthor() {
+
+    fun getPoemsByAuthor(authorName: String) {
         viewModelScope.launch {
-            poemUseCase.getPoemsByAuthor("").collect { result ->
+            poemUseCase.getPoemsByAuthor(authorName).collect { result ->
                 _poemTitleUIState.value = result
             }
         }
     }
 
-    fun getPoemInfo() {
+    fun getPoemInfo(authorName: String, poemTitle: String) {
         viewModelScope.launch {
             poemUseCase.getPoemInfo(
-            authorName = "",
-                poemTitle = ""
-
+            authorName = authorName, poemTitle = poemTitle
             ).collect { result ->
                 _poemInfoUIState.value = result
             }
