@@ -42,8 +42,7 @@ fun PoetryNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Welcome.route,
-        //startDestination = if (isFirstLaunch) Screen.Welcome.route else Screen.Author.route,
+        startDestination = if (isFirstLaunch) Screen.Welcome.route else Screen.Author.route,
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() },
         modifier = modifier
